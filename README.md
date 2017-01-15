@@ -5,10 +5,22 @@ autocomplete with mutliple tabs for bootstrap
 
 <code>
 $('#origin').tabAutocomplete({
-        tabs: {
-            'all': _t('all'),
-            'city': _t('city')
-        }
+  placement: "bottom",
+            className: "tab-autocomplete",
+            valueField: "value",
+            labelField: "label",
+            typeField: "type",
+            selected: {
+                value: null,
+                label: null
+            },
+            tabs: {
+                'all': 'all',
+                'city': 'city',
+                'country': 'country',
+                'region': 'region'
+            },
+            dataSource: []
     });
     </code>
     
@@ -19,8 +31,8 @@ $('#origin').tabAutocomplete({
            
            placeholder="placeholder.."
            data-placeholder="placeholder.."
-           data-value="{{ origin }}"
-           data-value-label="{{ originLabel }}"
+           data-selected-value="{{ origin }}"
+           data-selected-label="{{ originLabel }}"
            data-live-search-placeholder="{{ 'start typing...' }}"
            data-live-search-url="/search/hint/city"
            data-live-search-method="GET"
