@@ -4,10 +4,14 @@
   "description": "Bootstrap autocomplete in tabs",
   "repository": {
     "type": "git",
+      
     "url": "git+https://github.com/enyosolutions/bootstrap-tab-autocomplete.git"
   },
-  "author": "makmakulet",
-  "license": "ISC",
+  "author": "enyosolutions",
+  "license": "MIT",
+      "dependencies": {
+    "jquery" : ">=1.7.1"
+  },
   "bugs": {
     "url": "https://github.com/enyosolutions/bootstrap-tab-autocomplete/issues"
   },
