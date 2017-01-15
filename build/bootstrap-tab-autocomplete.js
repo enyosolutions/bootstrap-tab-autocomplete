@@ -275,8 +275,8 @@
                         }
                         delay(function() {
                             var q = $visibleInput.val();
-                            var url = options['liveSearchUrl'] || $input.data('live-search-url');
-                            var method = options['liveSearchMethod'] || $input.data('live-search-method') || 'GET';
+                            var url = $input.data('live-search-url') || options['liveSearchUrl'];
+                            var method = $input.data('live-search-method') || options['liveSearchMethod'] || 'GET';
 
                             //$popoverContent.find('prepend('<option disabled data-content="<img src=\'/img/ajax-loader-inline.gif\'/>'+_('selectpicker.ajax.search.label')+'" ></option>');
                             var type = $popoverContent.find('li.active a').data('type');
