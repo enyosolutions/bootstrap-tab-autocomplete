@@ -95,7 +95,6 @@
                         obj[options.valueField] = $e.attr('value');
                         obj[options.labelField] = $e.data('label') || $e.text();
                         obj[options.typeField] = $e.data('type');
-                        console.log(obj);
                         autoCompleteObj.tabAutocompCache['all'].push(obj);
                         if (obj.type) {
                             if (!this.tabAutocompCache[obj.type]) {
@@ -293,7 +292,6 @@
                             if (autoCompleteObj.tabAutocompCache[type]) {
                                 for (var i in autoCompleteObj.tabAutocompCache[type]) {
                                     var val = autoCompleteObj.tabAutocompCache[type][i];
-                                    console.log(val);
                                     if (val[options.valueField] && (val[options.valueField].indexOf($input.val() !== -1) || val[options.labelField]
                                             .indexOf($input.val()) !== -1)) {
                                         content += '<li class="list-group-item tab-autocomplete-item" data-label="' +
