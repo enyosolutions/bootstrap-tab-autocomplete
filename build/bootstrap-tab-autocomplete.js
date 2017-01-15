@@ -318,9 +318,9 @@ $(function() {
     }
 
 
-    $.fn.tabAutocomplete.defaults = {
+    $.fn.bsTabAutocomplete.defaults = {
         placement: "bottom",
-        className: "tabautocomplete",
+        className: "tab-autocomplete",
         selected: { value: null, label: null },
         tabs: {
             'all': 'all',
