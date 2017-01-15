@@ -25,7 +25,7 @@ $(function() {
     })();
 
 
-    $.fn.tabAutocomplete = function(funcOrOptions, value) {
+    $.fn.bsTabAutocomplete = function(funcOrOptions, value) {
 
         // if options is string, call string function.
         console.log(funcOrOptions);
@@ -35,14 +35,14 @@ $(function() {
         var options = {};
         if (typeof(funcOrOptions) !== 'string') {
             options = $.extend(options,
-                $.fn.tabAutocomplete.defaults, funcOrOptions);
+                $.fn.bsTabAutocomplete.defaults, funcOrOptions);
         }
 
 
         if ($this.length > 1) {
             $this.each(function() {
                 options.id = 'tab' + Date.now() + Math.round(Math.random() * 1000);
-                $(this).tabAutocomplete(options);
+                $(this).bsTabAutocomplete(options);
             });
             return $this;
         } else {
@@ -381,195 +381,4 @@ $(function() {
         return popover + header + content + '</div></div>';
     }
 });
-
-/*ar TabAutocomplete = function (element, options, e) {
- if (e) {
- //e.stopPropagation();
- e.preventDefault();
- }
-
- this.$element = $(element);
- this.$newElement = null;
- this.options = options;
-
- // If we have no title yet, try to pull it from the html title attribute (jQuery doesnt' pick it up as it's not a
- // data-attribute)
- if (this.options.title === null) {
- this.options.title = this.$element.attr('title');
- }
-
- //Expose public methods
- this.val = TabAutocomplete.prototype.val;
- this.show = TabAutocomplete.prototype.show;
- this.hide = TabAutocomplete.prototype.hide;
-
- this.init();
- };
-
- TabAutocomplete.DEFAULTS = {
- id: 'tab' + Date.now(),
- placement: "bottom",
- tabs: {
- 'all': 'all',
- // 'airport': _t('airport'),
- 'city': 'city',
- 'country': 'country',
- 'region': '<i class="fa fa-bell"></i> region'
- }
- };
- */
-/*
- TabAutocomplete.prototype = {
-
- constructor: TabAutocomplete,
-
- init: function () {
- var that = this,
- id = this.$element.attr('id');
-
- $(this).wrap("<div class='tab-autocomplete-wrapper'></div>");
- this.$parentDiv = this.$element.parents('.tab-autocomplete-wrapper');// $(this).wrap('<parent div>');
- this.$popover = this.$element.siblings('.popover');
- this.$popoverContent = $parentDiv.find('.popover-content');
- this.$popoverTitle = $parentDiv.find('.popover-title');
- this.$shadowInput = $(this.$element).clone();
- this.$shadowInput.attr('type', 'hidden');
- this.$shadowInput.attr('value', this.$element.data('value'));
- this.$parentDiv.after(this.$shadowInput);
- /*
- this.$newElement = this.createView();
- this.$element.after(this.$newElement);
- this.$menu = this.$newElement.children('.dropdown-menu');
- this.$button = this.$newElement.children('button');
- this.$searchbox = this.$newElement.find('input');
- },
- */
-
-
-/**
- *
- * @param options options {titles : object with keys => tabs ids and values = tab titles.}
- * options options {content : object with keys => tabs ids and values = tab contents.}
- * options {id : id of the tabs hight div}
- * @returns {string}
- */
-/*    initPopover: function (options) {
- var options = $.extend({
- id: 'tab' + Date.now(),
- animate: true,
- tabs: {},
- content: {},
- placement: 'bottom'
- }, options);
-
-
- //var html = '<div id="' + options.id + '" class="tab-block" style="min-width:300px, min-height:10vh">';
- var popover = '<div id="' + options.id + '" class="popover  ' + options.placement + ' fade" style="min-width:380px, min-height:10vh" role="tooltip"><div class="arrow"></div>';
- if (options.title) {
- popover += '<h3 class="popover-title">' + options.title + '</h3>';
- }
- popover += '<div class="popover-content">';
-
- var header = '<ul class="nav nav-tabs autocomplete-tabs" role="tablist">';
- var content = '<div class="tab-content">';
- var first = true, tabClasses = '', contentClasses = '';
- if (options.animate) {
- tabClasses = '';
- contentClasses = 'fade';
- }
- for (var i in options.tabs) {
- var thisTabClasses = "", thisContentClasses = "";
- if (first) {
- thisTabClasses = tabClasses + ' active first ';
- thisContentClasses = contentClasses + ' active ' + (options.animate ? ' in' : '');
- first = false;
- }
- header += '<li role="presentation" class="' + thisTabClasses + '"><a href="#' + i + '" aria-controls="' + i + '" role="tab" data-toggle="tab">' +  options.tabs[i] + '</a></li>';
- content += '<div role="tabpanel" class="tab-pane ' + thisContentClasses + '" id="' + i + '">' + (options.content[i] ? options.content[i] : "") + '</div>';
-
- }
- content += "</div>";
- header += "</ul>";
-
- return popover + header + content + '</div></div>';
- },
-
- val: function (value) {
- if (typeof value !== 'undefined') {
- this.$element.val(value);
- this.render();
-
- return this.$element;
- } else {
- return this.$element.val();
- }
- }
-
-
- }
-
-
-
- /*
-
- // SELECTPICKER PLUGIN DEFINITION
- // ==============================
- function Plugin(option, event) {
- // get the args of the outer function..
- var args = arguments;
- // The arguments of the function are explicitly re-defined from the argument list, because the shift causes them
- // to get lost/corrupted in android 2.3 and IE9 #715 #775
- var _option = option,
- _event = event;
- [].shift.apply(args);
-
- var value;
- var chain = this.each(function () {
- var $this = $(this);
- if ($this.is('input')) {
- var data = $this.data('tabautocomplete'),
- options = typeof _option == 'object' && _option;
-
- if (!data) {
- var config = $.extend({}, TabAutocomplete.DEFAULTS, $.fn.tabAutocomplete2.defaults || {}, $this.data(), options);
- $this.data('tabautocomplete', (data = new TabAutocomplete(this, config, _event)));
- } else if (options) {
- for (var i in options) {
- if (options.hasOwnProperty(i)) {
- data.options[i] = options[i];
- }
- }
- }
-
- if (typeof _option == 'string') {
- if (data[_option] instanceof Function) {
- value = data[_option].apply(data, args);
- } else {
- value = data.options[_option];
- }
- }
- }
- });
-
- if (typeof value !== 'undefined') {
- //noinspection JSUnusedAssignment
- return value;
- } else {
- return chain;
- }
- }
-
-
- var old = $.fn.tabAutocomplete2;
- $.fn.tabAutocomplete2 = Plugin;
- $.fn.tabAutocomplete2.Constructor = TabAutocomplete;
-
- // SELECTPICKER NO CONFLICT
- // ========================
- $.fn.tabAutocomplete2.noConflict = function () {
- $.fn.tabAutocomplete2 = old;
- return this;
- };
-
- */
 ;
