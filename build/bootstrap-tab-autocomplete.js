@@ -50,27 +50,23 @@
                 });
                 return $this;
             } else {
-                this.tabAutocompCache = {};
-                var autoCompleteObj = this;
-                options.id = 'tab' + Date.now() + Math.round(Math.random() * 1000);
+
                 if ($this.parents('.tab-autocomplete-wrapper').length > 0) {
                     return;
                 }
+                options.id = 'tab' + Date.now() + Math.round(Math.random() * 1000);
                 $this.wrap("<div class='tab-autocomplete-wrapper " + options.className + "'  id='wrapper-" + options.id + "' ></div>");
-
+                var autoCompleteObj = this;
                 var $parentDiv = $("#wrapper-" + options.id);
-
                 $parentDiv.append(initPopover(options));
 
                 var $popover = $this.siblings('.popover');
-
                 var $input = $parentDiv.children('input[type=text]');
                 var queryHandle;
                 var $input = $this;
                 var $popoverContent = $parentDiv.find('.popover-content');
-
-                var name = $input.attr('name'),
-                    id = $input.attr('id');
+                var name = $input.attr('name');
+                var id = $input.attr('id');
                 var tmp = Date.now();
                 var $visibleInput = $('<input type="text" id="' + id + tmp + '"/>');
 
@@ -78,6 +74,37 @@
                 $input.addClass("hidden");
                 $input.attr('rel', id + tmp).data('rel', id + tmp);
 
+                this.tabAutocompCache = {
+                    all: []
+                };
+                if (options.dataSource && options.dataSource.length) {
+                    for (var i in options.dataSource) {
+                        this.tabAutocompCache['all'].push(options.dataSource[i]);
+                        if (options.dataSource[i].type) {
+                            if (!this.tabAutocompCache[options.dataSource[i].type]) {
+                                this.tabAutocompCache[options.dataSource[i].type] = [];
+                            }
+                            this.tabAutocompCache[options.dataSource[i].type].push(options.dataSource[i]);
+                        }
+                    }
+
+                } else {
+                    $input.find('option').each(function(idx, e) {
+                        var obj = {};
+                        var $e = $(e);
+                        obj[options.valueField] = $e.attr('value');
+                        obj[options.labelField] = $e.data('label') || $e.text();
+                        obj[options.typeField] = $e.data('type');
+                        console.log(obj);
+                        autoCompleteObj.tabAutocompCache['all'].push(obj);
+                        if (obj.type) {
+                            if (!this.tabAutocompCache[obj.type]) {
+                                this.tabAutocompCache[obj.type] = [];
+                            }
+                            autoCompleteObj.tabAutocompCache[obj.type].push(obj);
+                        }
+                    });
+                }
 
                 this.setValue = function(valOrObject) {
                     var value, label;
@@ -90,7 +117,9 @@
                     }
                     $input.append("<option value='" + value + "'>" + label + '</option>');
                     $input.val(value);
-                    $input.data('label', label);
+                    $input.data(
+
+                        'selected-label', label);
                     $visibleInput.val(label);
                     $visibleInput.data('value', value);
                     $visibleInput.data('label', value);
@@ -102,7 +131,7 @@
                 this.getValue = function() {
                     var obj = {};
                     obj[options.valueField] = $input.val();
-                    obj[options.labelField] = $visibleInput.val() || $input.data('label');
+                    obj[options.labelField] = $visibleInput.val() || $input.data('selected-label');
                     return obj;
                 };
 
@@ -111,13 +140,13 @@
                     return;
                 }
 
-                if (options.selectedValue) {
-                    $input.val(options.selectedValue.value);
-                } else if ($input.data('value')) {
-                    $input.val($input.data('value'));
+                if (options.selected.value) {
+                    $input.val(options.selected.value);
+                } else if ($input.data('selected-value')) {
+                    $input.val($input.data('selected-value'));
                 }
-                if ($input.data('label')) {
-                    $visibleInput.attr('placeholder', $input.data('label'));
+                if ($input.data('selected-label')) {
+                    $visibleInput.attr('placeholder', $input.data('selected-label'));
                 }
 
                 $visibleInput.prependTo($parentDiv);
@@ -146,7 +175,6 @@
                         });
                     }
                     if ($(document).width() > 790) {
-                        console.log($popover.width());
                         $popover.css({
                             'position': 'absolute',
                             'left': "-" + (($popover.width() - $visibleInput.width()) / 2) + 'px',
@@ -154,16 +182,16 @@
                         });
                     } else {
                         /*  $popover.css({
-                               'position': 'fixed',
-                               'left': '5px',
-                               'right': '5px',
-                               'min-width':  '100%',
-                               'top':'5px',
-                               'bottom':  (position.top + 20),
-                               'height':  (position.top) - 10 ,
-                               overflow: 'scroll'
+                         'position': 'fixed',
+                         'left': '5px',
+                         'right': '5px',
+                         'min-width':  '100%',
+                         'top':'5px',
+                         'bottom':  (position.top + 20),
+                         'height':  (position.top) - 10 ,
+                         overflow: 'scroll'
 
-                           });*/
+                     });*/
                         $popover.css({
                             'position': 'absolute',
                             'left': '5px',
@@ -247,29 +275,49 @@
                         }
                         delay(function() {
                             var q = $visibleInput.val();
+                            var url = options['liveSearchUrl'] || $input.data('live-search-url');
+                            var method = options['liveSearchMethod'] || $input.data('live-search-method') || 'GET';
+
                             //$popoverContent.find('prepend('<option disabled data-content="<img src=\'/img/ajax-loader-inline.gif\'/>'+_('selectpicker.ajax.search.label')+'" ></option>');
                             var type = $popoverContent.find('li.active a').data('type');
                             type = type ? type : 'all';
                             $popoverContent.find('[data-tab-type=' + type + '] li.list-group-item').remove();
-                            var content = '<li class="list-group-item"><img src="/img/ajax-loader-inline.gif" /></li>';
-                            $popoverContent.find('[data-tab-type=' + type + "]").append(content);
+                            var content = "";
 
-                            //CACHING RESULTS
+                            if (url) {
+                                content = '<li class="list-group-item"><img src="/img/ajax-loader-inline.gif" /></li>';
+                                $popoverContent.find('[data-tab-type=' + type + "]").append(content);
+                            }
+
+                            //USING CACHE RESULTS
                             if (autoCompleteObj.tabAutocompCache[type]) {
                                 for (var i in autoCompleteObj.tabAutocompCache[type]) {
                                     var val = autoCompleteObj.tabAutocompCache[type][i];
+                                    console.log(val);
                                     if (val[options.valueField] && (val[options.valueField].indexOf($input.val() !== -1) || val[options.labelField]
                                             .indexOf($input.val()) !== -1)) {
-                                        content += '<li class="list-group-item tab-autocomplete-item" data-label="' + (val[options.labelField]) + '"  data-value="' + val[options.valueField] + '" data-type="' + _t(val[options.typeField]) + '" data-subtext="' + _t(val[options.typeField]) + '" >' + hightlight(val[options.labelField], q) + ' <span class="pull-right text-gray">' + _t(val[options.typeField]) + '</span></li>';
+                                        content += '<li class="list-group-item tab-autocomplete-item" data-label="' +
+                                            (val[options.labelField]) + '"  data-value="' + val[options.valueField] +
+                                            '" data-type="' + _t(val[options.typeField]) + '" data-subtext="' +
+                                            _t(val[options.typeField]) + '" >' + hightlight(val[options.labelField], q) +
+                                            ' <span class="pull-right text-gray">' + _t(val[options.typeField] || '') + '</span></li>';
                                     }
                                 }
+
+                                $popoverContent.find('[data-tab-type=' + type + "]").html(content);
                             }
 
 
                             // launching request
+
+                            // if no live url is available return;
+                            if (!url) {
+                                return;
+                            }
+
                             var queryHandle = $.ajax({
-                                url: options['liveSearchUrl'] || $input.data('live-search-url'),
-                                method: options['liveSearchMethod'] || $input.data('live-search-method') || 'GET',
+                                url: url,
+                                method: method,
                                 data: {
                                     q: q,
                                     lang: (App.options.locale || 'en'),
@@ -283,9 +331,9 @@
                                     /*
                                 $parentDiv.find('option').each(function (idex, elm) {
 
-                                   $existingValues.push(elm.value);
-                               });
-                               */
+                                 $existingValues.push(elm.value);
+                             });
+                             */
                                     if (data instanceof Array) {
                                         autoCompleteObj.tabAutocompCache[type] = {};
                                         if ('all' === type) {
@@ -354,7 +402,8 @@
                 'city': 'city',
                 'country': 'country',
                 'region': 'region'
-            }
+            },
+            dataSource: null
         };
 
         var hightlight = function(str, substring) {
