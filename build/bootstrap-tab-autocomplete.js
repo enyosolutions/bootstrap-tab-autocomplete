@@ -206,11 +206,8 @@ $(function() {
 
                 var $targetWrapper = $(event.target).closest('.tab-autocomplete-wrapper');
                 if (!$targetWrapper.length) { //if it wasn't one of us
-
-                    if ($targetWrapper.hasClass('open')) {
-                        $targetWrapper.removeClass('open');
-                        $visibleInput.attr('placeholder', $input.data('placeholder'));
-                    }
+                     var $wrapper = $('.tab-autocomplete-wrapper');
+                        $wrapper.removeClass('open');
                 } else {
                     if ($targetWrapper.attr('id') === $parentDiv.attr('id')) {
                         $targetWrapper.find('input[type=text]').focus();
