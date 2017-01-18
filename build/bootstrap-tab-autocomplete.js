@@ -76,6 +76,7 @@
 
                 this.tabAutocompCache = {
                     all: []
+                    
                 };
                 if (options.dataSource && options.dataSource.length) {
                     for (var i in options.dataSource) {
