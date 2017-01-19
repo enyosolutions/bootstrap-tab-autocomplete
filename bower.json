@@ -4,8 +4,7 @@
     "build/bootstrap-tab-autocomplete.js"
   ]
   
-   "keywords": [
-  "bootstrap","autocomplete","tabs", "jquery"
+   "keywords": [ "bootstrap","autocomplete","tabs", "jquery"
   ],
   "authors": [
     "faouzane BATIGA fb@enyosolutions.com"
