@@ -3,13 +3,24 @@
   "main": [
     "build/bootstrap-tab-autocomplete.js"
   ],
-  
-   "keywords":[
-     "bootstrap","autocomplete","tabs", "jquery"
+  "keywords": [
+    "bootstrap",
+    "autocomplete",
+    "tabs",
+    "jquery"
   ],
   "authors": [
     "faouzane BATIGA fb@enyosolutions.com"
   ],
   "license": "MIT",
-  "ignore": []
-  }
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "0.0.9",
+  "homepage": "https://github.com/enyosolutions/bootstrap-tab-autocomplete",
+  "description": "autocomplete with mutliple tabs for bootstrap"
+}
