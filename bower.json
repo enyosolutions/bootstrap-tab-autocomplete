@@ -1,0 +1,6 @@
+{
+  "name": "bootstrap-tab-autocomplete",
+  "main": [
+    "build/bootstrap-tab-autocomplete.js"
+  ]
+  }
